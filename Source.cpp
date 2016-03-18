@@ -4,6 +4,8 @@
 #include <vector>
 #include "declaration.h"
 
+using namespace expressionTree;
+
 int main()
 {
 	std::fstream sfm("expresions.txt");

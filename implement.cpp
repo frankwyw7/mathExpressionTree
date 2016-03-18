@@ -1,5 +1,11 @@
 #include "declaration.h"
 
+using namespace expressionTree;
+
+exception::exception(int ln, int ps, std::string b) : line(ln), pos(ps), err(b){}
+
+Token::Token(Type ty, std::shared_ptr<Token> lf, std::shared_ptr<Token> rt) :type(ty), left(lf), right(rt){}
+
 std::string exception::what()
 {
 	std::ostringstream bb;
@@ -14,6 +20,8 @@ std::string exception::what()
 	str += bb.str();
 	return str;
 }
+
+Exp::Exp(std::shared_ptr<Token> lf, std::shared_ptr<Token> rt, Type ty) :Token(ty, lf, rt){}
 
 int Exp::op()
 {
@@ -37,6 +45,8 @@ int Exp::op()
 	return lf;
 }
 
+Exp_::Exp_(std::shared_ptr<Token> lf, std::shared_ptr<Token> rt, Type ty) :Token(ty, lf, rt){}
+
 int Exp_::op()
 {
 	int lf = left->op();
@@ -58,6 +68,8 @@ int Exp_::op()
 
 }
 
+Term::Term(std::shared_ptr<Token> lf, std::shared_ptr<Token> rt, Type ty) :Token(ty, lf, rt){}
+
 int Term::op()
 {
 	int lf = left->op();
@@ -78,6 +90,8 @@ int Term::op()
 	return lf;
 }
 
+Term_::Term_(std::shared_ptr<Token> lf, std::shared_ptr<Token> rt, Type ty) :Token(ty, lf, rt){}
+
 int Term_::op()
 {
 	int lf = left->op();
@@ -97,6 +111,12 @@ int Term_::op()
 		return lf;
 	}
 }
+
+Factor::Factor(std::shared_ptr<Token> lf, Type ty) :Token(ty, lf, nullptr){}
+
+Num::Num(Type ty, int vl) : Token(ty, nullptr, nullptr) { value = vl; }
+
+Calculator::Calculator(std::vector<std::string> strvec) : buf(strvec), pos(0), resultval(0){}
 
 void Calculator::run()
 {
@@ -166,6 +186,8 @@ void Calculator::print(std::shared_ptr<Token> t)
 		break;
 	}
 }
+
+void Calculator::skipspace(){ if (buf[line][pos] == ' ' && pos < buf[line].size())pos++; }
 
 std::shared_ptr<Exp> Calculator::getExp()
 {
